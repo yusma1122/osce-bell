@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer Bel Profesional</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    }
+
+    h2 {
+      color: #1e293b;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .timer-icon {
+      font-size: 32px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      color: #475569;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 16px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #ffffff;
+      transition: all 0.3s ease;
+      color: #1e293b;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .preset-btn {
+      padding: 14px 8px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      color: #475569;
+      border: 2px solid #cbd5e0;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .preset-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(148, 163, 184, 0.15);
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+      border-color: #94a3b8;
+    }
+
+    .preset-btn:active {
+      transform: translateY(0);
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 24px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .start-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .start-btn:hover::before {
+      left: 100%;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
+    }
+
+    .countdown {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      color: #1e293b;
+      padding: 30px;
+      border-radius: 20px;
+      margin: 24px 0;
+      box-shadow: inset 0 2px 10px rgba(148, 163, 184, 0.1);
+      border: 2px solid #e2e8f0;
+      position: relative;
+    }
+
+    .countdown-display {
+      font-size: 48px;
+      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(148, 163, 184, 0.2);
+      font-family: 'Courier New', monospace;
+    }
+
+    .countdown-label {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .status-finished {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      border-color: #86efac;
+      color: #15803d;
+      animation: celebration 1s ease-in-out;
+    }
+
+    @keyframes celebration {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .bell-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 480px) {
+      .container {
+        margin: 10px;
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .countdown-display {
+        font-size: 36px;
+      }
+
+      .preset-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .preset-btn {
+        padding: 16px;
+        font-size: 14px;
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      .container {
+        background: rgba(45, 55, 72, 0.95);
+        color: #e2e8f0;
+      }
+
+      h2 {
+        color: #e2e8f0;
+      }
+
+      label {
+        color: #cbd5e0;
+      }
+
+      input, select {
+        background: rgba(74, 85, 104, 0.8);
+        border-color: #4a5568;
+        color: #e2e8f0;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .pause-btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      margin-top: 12px;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .reset-btn {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      margin-top: 8px;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .developer-credit {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border: 1px solid #cbd5e0;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 20px 0 10px 0;
+      text-align: center;
+    }
+
+    .developer-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .developer-title {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #cbd5e0;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
+      background: rgba(255, 255, 255, 1);
+    }
+
+    .social-link.linkedin:hover {
+      border-color: #0077b5;
+      color: #0077b5;
+    }
+
+    .social-link.instagram:hover {
+      border-color: #e4405f;
+      color: #e4405f;
+    }
+
+    .footer-credit {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 11px;
+      color: #94a3b8;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Developer Credit Header -->
+    <div class="developer-credit">
+      <div class="developer-name">Yusma Rahman</div>
+      <div class="developer-title">Junior Web Developer</div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/yusmarahman09/" target="_blank" class="social-link linkedin">
+          💼 LinkedIn
+        </a>
+        <a href="https://instagram.com/yusmafrlnc" target="_blank" class="social-link instagram">
+          📸 Instagram
+        </a>
+      </div>
+    </div>
+
+    <h2>
+      <span class="timer-icon">⏱️</span>
+      Timer Bel OSCE
+    </h2>
+
+    <div class="form-group">
+      <label for="duration">Durasi Timer</label>
+      <input type="number" id="duration" min="1" max="3600" placeholder="Masukkan detik (1-3600)">
+    </div>
+
+    <div class="preset-buttons">
+      <button class="preset-btn" onclick="setPreset(60)">
+        🕐 1 Menit
+      </button>
+      <button class="preset-btn" onclick="setPreset(120)">
+        🕑 2 Menit
+      </button>
+      <button class="preset-btn" onclick="setPreset(300)">
+        🕔 5 Menit
+      </button>
+      <button class="preset-btn" onclick="setPreset(480)">
+        🕗 8 Menit
+      </button>
+      <button class="preset-btn" onclick="setPreset(600)">
+        🕙 10 Menit
+      </button>
+      <button class="preset-btn" onclick="setPreset(900)">
+        🕒 15 Menit
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label for="bell">Jenis Suara Bel</label>
+      <select id="bell">
+        <option value="bell1.mp3" class="bell-option">🔔 Bel Standar</option>
+        <option value="bell2.mp3" class="bell-option">🔔🔔 Bel Ganda</option>
+        <option value="bell3.mp3" class="bell-option">📢 Bel Panjang</option>
+      </select>
+    </div>
+
+    <button class="start-btn" id="startBtn" onclick="startTimer()">
+      🚀 Mulai Timer
+    </button>
+
+    <button class="start-btn pause-btn hidden" id="pauseBtn" onclick="pauseTimer()">
+      ⏸️ Jeda
+    </button>
+
+    <button class="start-btn reset-btn hidden" id="resetBtn" onclick="resetTimer()">
+      🔄 Reset
+    </button>
+
+    <div class="countdown hidden" id="countdownContainer">
+      <div class="countdown-display" id="countdown">00:00</div>
+      <div class="countdown-label">Waktu Tersisa</div>
+    </div>
+
+    <audio id="audio" preload="auto"></audio>
+
+    <!-- Footer Credit -->
+    <div class="footer-credit">
+      © 2025 Timer Bel OSCE by <br>
+      <strong>Yusma Rahman</strong> | Junior Web Developer
+    </div>
+  </div>
+
+  <script>
+    let countdownInterval;
+    let isPaused = false;
+    let timeLeft = 0;
+    let originalDuration = 0;
+
+    function setPreset(seconds) {
+      document.getElementById("duration").value = seconds;
+      updateCountdownDisplay(seconds);
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateCountdownDisplay(seconds) {
+      const countdown = document.getElementById("countdown");
+      const container = document.getElementById("countdownContainer");
+      
+      countdown.textContent = formatTime(seconds);
+      container.classList.remove('hidden');
+    }
+
+    function startTimer() {
+      const duration = parseInt(document.getElementById("duration").value);
+      
+      if (!duration || duration <= 0 || duration > 3600) {
+        alert("Masukkan durasi yang valid (1-3600 detik)!");
+        return;
+      }
+
+      timeLeft = duration;
+      originalDuration = duration;
+      isPaused = false;
+      
+      // Update UI
+      document.getElementById("startBtn").classList.add('hidden');
+      document.getElementById("pauseBtn").classList.remove('hidden');
+      document.getElementById("resetBtn").classList.remove('hidden');
+      document.getElementById("countdownContainer").classList.remove('status-finished');
+      
+      updateCountdownDisplay(timeLeft);
+      
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        if (!isPaused) {
+          timeLeft--;
+          updateCountdownDisplay(timeLeft);
+          
+          if (timeLeft <= 0) {
+            finishTimer();
+          }
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      isPaused = !isPaused;
+      const pauseBtn = document.getElementById("pauseBtn");
+      
+      if (isPaused) {
+        pauseBtn.innerHTML = "▶️ Lanjut";
+      } else {
+        pauseBtn.innerHTML = "⏸️ Jeda";
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      isPaused = false;
+      timeLeft = 0;
+      
+      // Reset UI
+      document.getElementById("startBtn").classList.remove('hidden');
+      document.getElementById("pauseBtn").classList.add('hidden');
+      document.getElementById("resetBtn").classList.add('hidden');
+      document.getElementById("countdownContainer").classList.add('hidden');
+      document.getElementById("pauseBtn").innerHTML = "⏸️ Jeda";
+    }
+
+    function finishTimer() {
+      clearInterval(countdownInterval);
+      
+      const countdown = document.getElementById("countdown");
+      const container = document.getElementById("countdownContainer");
+      const bell = document.getElementById("bell").value;
+      const audio = document.getElementById("audio");
+      
+      countdown.textContent = "🎉 SELESAI!";
+      container.classList.add('status-finished');
+      
+      // Play selected MP3 file
+      audio.src = bell;
+      audio.play().catch(error => {
+        console.log('Error playing audio:', error);
+        // Fallback notification if audio fails
+        alert('Timer Selesai!');
+      });
+      
+      // Reset buttons after 3 seconds
+      setTimeout(() => {
+        resetTimer();
+      }, 3000);
+      
+      // Show completion notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Timer Selesai!', {
+          body: 'Waktu timer telah habis.',
+          icon: '⏰'
+        });
+      }
+    }
+
+    // Request notification permission on load
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    // Prevent screen sleep (if supported)
+    let wakeLock = null;
+    if ('wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').then(lock => {
+        wakeLock = lock;
+      }).catch(err => {
+        console.log('Wake lock not supported');
+      });
+    }
+  </script>
+</body>
+</html>
