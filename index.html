@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Timer Bel OSCE - 2 Mode & Bunyi Langsung</title>
+    <link rel="icon" href="icon/favicon.ico" type="image/png" />
+    <title>TIMER OSCE</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -574,13 +575,13 @@
         <label class="form-label" for="bell">Jenis Suara Bel</label>
         <div class="input-group">
           <select id="bell">
-            <option value="bell1.mp3">
+            <option value="sounds/bell1.mp3">
               <i class="fas fa-bell"></i> Bel Standar
             </option>
-            <option value="bell2.mp3">
+            <option value="sounds/bell2.mp3">
               <i class="fas fa-bell"></i> Bel Ganda
             </option>
-            <option value="bell3.mp3">
+            <option value="sounds/bell3.mp3">
               <i class="fas fa-bullhorn"></i> Bel Panjang
             </option>
           </select>
@@ -746,9 +747,9 @@
         scheduleList.classList.remove("hidden");
 
         const bellNames = {
-          "bell1.mp3": '<i class="fas fa-bell"></i> Bel Standar',
-          "bell2.mp3": '<i class="fas fa-bell"></i> Bel Ganda',
-          "bell3.mp3": '<i class="fas fa-bullhorn"></i> Bel Panjang',
+          "sounds/bell1.mp3": '<i class="fas fa-bell"></i> Bel Standar',
+          "sounds/bell2.mp3": '<i class="fas fa-bell"></i> Bel Ganda',
+          "sounds/bell3.mp3": '<i class="fas fa-bullhorn"></i> Bel Panjang',
         };
 
         scheduleItems.innerHTML = schedule
