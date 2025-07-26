@@ -1,566 +1,1031 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timer Bel OSCE</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .container {
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #3b82f6, #06b6d4);
-    }
-
-    h2 {
-      color: #1e293b;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .timer-icon {
-      font-size: 32px;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    .form-group {
-      margin-bottom: 24px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      color: #475569;
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 16px 18px;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 16px;
-      background: #ffffff;
-      transition: all 0.3s ease;
-      color: #1e293b;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .preset-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin: 24px 0;
-    }
-
-    .preset-btn {
-      padding: 14px 8px;
-      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-      color: #475569;
-      border: 2px solid #cbd5e0;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .preset-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(148, 163, 184, 0.15);
-      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-      border-color: #94a3b8;
-    }
-
-    .preset-btn:active {
-      transform: translateY(0);
-    }
-
-    .start-btn {
-      width: 100%;
-      padding: 18px;
-      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-      color: white;
-      border: none;
-      border-radius: 16px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 24px 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .start-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-
-    .start-btn:hover::before {
-      left: 100%;
-    }
-
-    .start-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
-    }
-
-    .countdown {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      color: #1e293b;
-      padding: 30px;
-      border-radius: 20px;
-      margin: 24px 0;
-      box-shadow: inset 0 2px 10px rgba(148, 163, 184, 0.1);
-      border: 2px solid #e2e8f0;
-      position: relative;
-    }
-
-    .countdown-display {
-      font-size: 48px;
-      font-weight: 800;
-      text-shadow: 0 2px 4px rgba(148, 163, 184, 0.2);
-      font-family: 'Courier New', monospace;
-    }
-
-    .countdown-label {
-      font-size: 14px;
-      opacity: 0.8;
-      margin-top: 8px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    .status-finished {
-      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-      border-color: #86efac;
-      color: #15803d;
-      animation: celebration 1s ease-in-out;
-    }
-
-    @keyframes celebration {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .bell-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-    }
-
-    /* Mobile Optimizations */
-    @media (max-width: 480px) {
-      .container {
-        margin: 10px;
-        padding: 30px 20px;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timer Bel OSCE - 2 Mode & Bunyi Langsung</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      h2 {
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(135deg, #a0a0a0 0%, #414141 100%);
+        min-height: 100vh;
+        padding: 16px;
+        color: #1a202c;
+      }
+
+      .container {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 400px;
+        margin: 0 auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .app-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: #1a202c;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .timer-icon {
         font-size: 24px;
+      }
+
+      .app-subtitle {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+
+      .app-subtitle i {
+        font-size: 11px;
+        color: #94a3b8;
+      }
+
+      .developer-credit {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .developer-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2px;
+      }
+
+      .developer-title {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .social-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+
+      .social-link:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .social-link.linkedin:hover {
+        border-color: #0077b5;
+        color: #0077b5;
+      }
+
+      .social-link.instagram:hover {
+        border-color: #e4405f;
+        color: #e4405f;
+      }
+
+      .form-section {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        color: #374151;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #ffffff;
+        transition: all 0.2s;
+        color: #1f2937;
+        font-weight: 500;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin: 16px 0;
+      }
+
+      .preset-btn {
+        padding: 12px 8px;
+        background: #f8fafc;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .preset-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #667eea;
+        background: #f1f5f9;
+      }
+
+      .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 16px 0;
+      }
+
+      .btn {
+        padding: 10px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #10b981;
+        color: white;
+      }
+
+      .btn-warning {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .start-btn {
+        width: 100%;
+        padding: 16px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+      }
+
+      .start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      }
+
+      .countdown {
+        background: #f8fafc;
+        color: #1e293b;
+        padding: 24px;
+        border-radius: 12px;
+        margin: 20px 0;
+        border: 1px solid #e2e8f0;
+        text-align: center;
+      }
+
+      .countdown::before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: #667eea;
+        border-radius: 2px;
+        margin-bottom: 16px;
       }
 
       .countdown-display {
         font-size: 36px;
+        font-weight: 800;
+        font-family: "Inter", monospace;
+        letter-spacing: -1px;
+        margin-bottom: 6px;
+        color: #667eea;
       }
 
-      .preset-buttons {
-        grid-template-columns: 1fr;
-        gap: 10px;
+      .countdown-label {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
-      .preset-btn {
-        padding: 16px;
+      .status-finished {
+        background: #f0fdf4;
+        border-color: #10b981;
+      }
+
+      .status-finished .countdown-display {
+        color: #10b981;
+      }
+
+      .status-finished::before {
+        background: #10b981;
+      }
+
+      .schedule-list {
+        background: #fffbeb;
+        border: 1px solid #fbbf24;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+      }
+
+      .schedule-list h3 {
+        color: #92400e;
+        margin-bottom: 12px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .schedule-item {
+        background: white;
+        padding: 12px 16px;
+        margin: 8px 0;
+        border-radius: 8px;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+
+      .schedule-item:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .schedule-item.active {
+        background: #eff6ff;
+        border: 1px solid #667eea;
+        font-weight: 600;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      }
+
+      .delete-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+
+      .delete-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+      }
+
+      .pause-btn {
+        background: #f59e0b;
+        margin-top: 8px;
+        padding: 14px;
         font-size: 14px;
       }
-    }
 
-    /* Dark mode support */
-    @media (prefers-color-scheme: dark) {
-      .container {
-        background: rgba(45, 55, 72, 0.95);
-        color: #e2e8f0;
+      .reset-btn {
+        background: #ef4444;
+        margin-top: 8px;
+        padding: 14px;
+        font-size: 14px;
       }
 
-      h2 {
-        color: #e2e8f0;
+      .footer-credit {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 11px;
+        color: #94a3b8;
+        text-align: center;
+        font-weight: 500;
       }
 
-      label {
-        color: #cbd5e0;
+      .hidden {
+        display: none;
       }
 
-      input, select {
-        background: rgba(74, 85, 104, 0.8);
-        border-color: #4a5568;
-        color: #e2e8f0;
+      /* Mobile Optimizations */
+      @media (max-width: 480px) {
+        body {
+          padding: 12px;
+        }
+
+        .container {
+          padding: 20px;
+          border-radius: 12px;
+        }
+
+        .app-title {
+          font-size: 18px;
+        }
+
+        .countdown-display {
+          font-size: 32px;
+        }
+
+        .preset-grid {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+
+        .action-buttons {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+
+        .preset-btn {
+          padding: 14px;
+          font-size: 14px;
+        }
+
+        .start-btn {
+          padding: 14px;
+          font-size: 15px;
+        }
+
+        .social-links {
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .social-link {
+          justify-content: center;
+        }
       }
-    }
 
-    .hidden {
-      display: none;
-    }
+      /* Enhanced focus states for accessibility */
+      input:focus-visible,
+      select:focus-visible,
+      button:focus-visible {
+        outline: 2px solid #667eea;
+        outline-offset: 2px;
+      }
 
-    .pause-btn {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      margin-top: 12px;
-      padding: 12px;
-      font-size: 16px;
-    }
+      /* Smooth transitions for all interactive elements */
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
 
-    .reset-btn {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      margin-top: 8px;
-      padding: 12px;
-      font-size: 16px;
-    }
+      /* Custom scrollbar for webkit browsers */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
 
-    .developer-credit {
-      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-      border: 1px solid #cbd5e0;
-      border-radius: 16px;
-      padding: 16px;
-      margin: 20px 0 10px 0;
-      text-align: center;
-    }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 2px;
+      }
 
-    .developer-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 4px;
-    }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 2px;
+      }
 
-    .developer-title {
-      font-size: 12px;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-      font-style: italic;
-    }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Developer Credit Header -->
+      <div class="developer-credit">
+        <div class="developer-name">Yusma Rahman</div>
+        <div class="developer-title"><i>Junior Web Developer</i></div>
+        <div class="social-links">
+          <a
+            href="https://www.linkedin.com/in/yusmarahman09/"
+            target="_blank"
+            class="social-link linkedin"
+          >
+            <i class="fab fa-linkedin me-1"></i> LinkedIn
+          </a>
+          <a
+            href="https://instagram.com/yusmafrlnc"
+            target="_blank"
+            class="social-link instagram"
+          >
+            <i class="fab fa-instagram me-1"></i> Instagram
+          </a>
+        </div>
+      </div>
 
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-    }
+      <div class="header">
+        <h1 class="app-title">
+          <span class="timer-icon">
+            <i class="fas fa-stopwatch me-2"></i>
+          </span>
+          Timer Bel OSCE
+        </h1>
+        <p class="app-subtitle">Timer digital dan lebih praktis</p>
+        <p class="app-subtitle">
+          <i>*Sambungkan ke speaker untuk peforma lebih bagus</i>
+        </p>
+      </div>
 
-    .social-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid #cbd5e0;
-      border-radius: 20px;
-      text-decoration: none;
-      color: #475569;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
+      <!-- Mode Selection -->
+      <div class="form-section">
+        <label class="form-label" for="modeSelect">Pilih Mode Timer</label>
+        <div class="input-group">
+          <select id="modeSelect" onchange="switchMode()">
+            <option value="manual">
+              <i class="fas fa-cog"></i> Mode Manual
+            </option>
+            <option value="schedule">
+              <i class="fas fa-calendar-alt"></i> Mode Berjadwal
+            </option>
+          </select>
+        </div>
+      </div>
 
-    .social-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
-      background: rgba(255, 255, 255, 1);
-    }
+      <div class="form-section">
+        <label class="form-label" for="duration">Durasi Timer (detik)</label>
+        <div class="input-group">
+          <input
+            type="number"
+            id="duration"
+            min="1"
+            max="3600"
+            placeholder="Masukkan durasi 1-3600 detik"
+          />
+        </div>
+      </div>
 
-    .social-link.linkedin:hover {
-      border-color: #0077b5;
-      color: #0077b5;
-    }
+      <div class="preset-grid">
+        <button class="preset-btn" onclick="setPreset(60)">
+          <i class="fas fa-clock"></i> 1 Menit
+        </button>
+        <button class="preset-btn" onclick="setPreset(120)">
+          <i class="fas fa-clock"></i> 2 Menit
+        </button>
+        <button class="preset-btn" onclick="setPreset(300)">
+          <i class="fas fa-clock"></i> 5 Menit
+        </button>
+        <button class="preset-btn" onclick="setPreset(480)">
+          <i class="fas fa-clock"></i> 8 Menit
+        </button>
+        <button class="preset-btn" onclick="setPreset(600)">
+          <i class="fas fa-clock"></i> 10 Menit
+        </button>
+        <button class="preset-btn" onclick="setPreset(900)">
+          <i class="fas fa-clock"></i> 15 Menit
+        </button>
+      </div>
 
-    .social-link.instagram:hover {
-      border-color: #e4405f;
-      color: #e4405f;
-    }
+      <div class="form-section">
+        <label class="form-label" for="bell">Jenis Suara Bel</label>
+        <div class="input-group">
+          <select id="bell">
+            <option value="bell1.mp3">
+              <i class="fas fa-bell"></i> Bel Standar
+            </option>
+            <option value="bell2.mp3">
+              <i class="fas fa-bell"></i> Bel Ganda
+            </option>
+            <option value="bell3.mp3">
+              <i class="fas fa-bullhorn"></i> Bel Panjang
+            </option>
+          </select>
+        </div>
+      </div>
 
-    .footer-credit {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid #e2e8f0;
-      font-size: 11px;
-      color: #94a3b8;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Developer Credit Header -->
-    <div class="developer-credit">
-      <div class="developer-name">Yusma Rahman</div>
-      <div class="developer-title">Junior Web Developer</div>
-      <div class="social-links">
-        <a href="https://www.linkedin.com/in/yusmarahman09/" target="_blank" class="social-link linkedin">
-          💼 LinkedIn
-        </a>
-        <a href="https://instagram.com/yusmafrlnc" target="_blank" class="social-link instagram">
-          📸 Instagram
-        </a>
+      <!-- Action Buttons -->
+      <div class="action-buttons" id="scheduleButtons" style="display: none">
+        <!-- Tambah Jadwal -->
+        <button class="btn btn-primary" onclick="addSchedule()">
+          <i class="fas fa-plus me-1"></i> Tambah Jadwal
+        </button>
+
+        <!-- Test Bunyi -->
+        <button class="btn btn-warning" onclick="playNow()">
+          <i class="fas fa-bell me-1"></i> Test Bunyi
+        </button>
+      </div>
+
+      <div class="action-buttons" id="manualButtons">
+        <button class="btn btn-warning" onclick="playNow()">
+          <i class="fas fa-bell me-2"></i> Test Bunyi
+        </button>
+
+        <button class="btn btn-secondary" onclick="clearAll()">
+          <i class="fas fa-trash me-2"></i> Clear
+        </button>
+      </div>
+
+      <!-- Schedule List -->
+      <div class="schedule-list hidden" id="scheduleList">
+        <h3><i class="fas fa-clipboard-list me-2"></i>Daftar Jadwal Timer</h3>
+        <div id="scheduleItems"></div>
+      </div>
+
+      <button class="start-btn" id="startBtn" onclick="startSystem()">
+        <i class="fas fa-rocket me-2"></i> Mulai Timer
+      </button>
+
+      <button
+        class="start-btn pause-btn hidden"
+        id="pauseBtn"
+        onclick="pauseTimer()"
+      >
+        <i class="fas fa-pause me-2"></i> Jeda
+      </button>
+
+      <button
+        class="start-btn reset-btn hidden"
+        id="resetBtn"
+        onclick="resetTimer()"
+      >
+        <i class="fas fa-redo me-2"></i> Reset
+      </button>
+
+      <div class="countdown hidden" id="countdownContainer">
+        <div class="countdown-display" id="countdown">00:00</div>
+        <div class="countdown-label" id="countdownLabel">Waktu Tersisa</div>
+      </div>
+
+      <audio id="audio" preload="auto"></audio>
+
+      <!-- Footer Credit -->
+      <div class="footer-credit">
+        © 2025 Timer Bel OSCE by <br /><br />
+        <strong>Yusma Rahman</strong><br />
+        Junior Web Developer
       </div>
     </div>
 
-    <h2>
-      <span class="timer-icon">⏱️</span>
-      Timer Bel OSCE
-    </h2>
+    <script>
+      // Global variables
+      const schedule = [];
+      let currentIndex = 0;
+      let countdownInterval = null;
+      let isPaused = false;
+      let timeLeft = 0;
+      let originalDuration = 0;
+      let currentMode = "manual";
+      let isRunning = false;
 
-    <div class="form-group">
-      <label for="duration">Durasi Timer</label>
-      <input type="number" id="duration" min="1" max="3600" placeholder="Masukkan detik (1-3600)">
-    </div>
+      // Mode switching
+      function switchMode() {
+        currentMode = document.getElementById("modeSelect").value;
+        const scheduleButtons = document.getElementById("scheduleButtons");
+        const manualButtons = document.getElementById("manualButtons");
 
-    <div class="preset-buttons">
-      <button class="preset-btn" onclick="setPreset(60)">
-        🕐 1 Menit
-      </button>
-      <button class="preset-btn" onclick="setPreset(120)">
-        🕑 2 Menit
-      </button>
-      <button class="preset-btn" onclick="setPreset(300)">
-        🕔 5 Menit
-      </button>
-      <button class="preset-btn" onclick="setPreset(480)">
-        🕗 8 Menit
-      </button>
-      <button class="preset-btn" onclick="setPreset(600)">
-        🕙 10 Menit
-      </button>
-      <button class="preset-btn" onclick="setPreset(900)">
-        🕒 15 Menit
-      </button>
-    </div>
-
-    <div class="form-group">
-      <label for="bell">Jenis Suara Bel</label>
-      <select id="bell">
-        <option value="bell1.mp3" class="bell-option">🔔 Bel Standar</option>
-        <option value="bell2.mp3" class="bell-option">🔔🔔 Bel Ganda</option>
-        <option value="bell3.mp3" class="bell-option">📢 Bel Panjang</option>
-      </select>
-    </div>
-
-    <button class="start-btn" id="startBtn" onclick="startTimer()">
-      🚀 Mulai Timer
-    </button>
-
-    <button class="start-btn pause-btn hidden" id="pauseBtn" onclick="pauseTimer()">
-      ⏸️ Jeda
-    </button>
-
-    <button class="start-btn reset-btn hidden" id="resetBtn" onclick="resetTimer()">
-      🔄 Reset
-    </button>
-
-    <div class="countdown hidden" id="countdownContainer">
-      <div class="countdown-display" id="countdown">00:00</div>
-      <div class="countdown-label">Waktu Tersisa</div>
-    </div>
-
-    <audio id="audio" preload="auto"></audio>
-
-    <!-- Footer Credit -->
-    <div class="footer-credit">
-      © 2025 Timer Bel OSCE by <br>
-      <strong>Yusma Rahman</strong> | Junior Web Developer
-    </div>
-  </div>
-
-  <script>
-    let countdownInterval;
-    let isPaused = false;
-    let timeLeft = 0;
-    let originalDuration = 0;
-
-    function setPreset(seconds) {
-      document.getElementById("duration").value = seconds;
-      updateCountdownDisplay(seconds);
-    }
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function updateCountdownDisplay(seconds) {
-      const countdown = document.getElementById("countdown");
-      const container = document.getElementById("countdownContainer");
-      
-      countdown.textContent = formatTime(seconds);
-      container.classList.remove('hidden');
-    }
-
-    function startTimer() {
-      const duration = parseInt(document.getElementById("duration").value);
-      
-      if (!duration || duration <= 0 || duration > 3600) {
-        alert("Masukkan durasi yang valid (1-3600 detik)!");
-        return;
-      }
-
-      timeLeft = duration;
-      originalDuration = duration;
-      isPaused = false;
-      
-      // Update UI
-      document.getElementById("startBtn").classList.add('hidden');
-      document.getElementById("pauseBtn").classList.remove('hidden');
-      document.getElementById("resetBtn").classList.remove('hidden');
-      document.getElementById("countdownContainer").classList.remove('status-finished');
-      
-      updateCountdownDisplay(timeLeft);
-      
-      clearInterval(countdownInterval);
-      countdownInterval = setInterval(() => {
-        if (!isPaused) {
-          timeLeft--;
-          updateCountdownDisplay(timeLeft);
-          
-          if (timeLeft <= 0) {
-            finishTimer();
-          }
+        if (currentMode === "schedule") {
+          scheduleButtons.style.display = "grid";
+          manualButtons.style.display = "none";
+          updateScheduleDisplay();
+        } else {
+          scheduleButtons.style.display = "none";
+          manualButtons.style.display = "grid";
+          document.getElementById("scheduleList").classList.add("hidden");
         }
-      }, 1000);
-    }
 
-    function pauseTimer() {
-      isPaused = !isPaused;
-      const pauseBtn = document.getElementById("pauseBtn");
-      
-      if (isPaused) {
-        pauseBtn.innerHTML = "▶️ Lanjut";
-      } else {
-        pauseBtn.innerHTML = "⏸️ Jeda";
-      }
-    }
-
-    function resetTimer() {
-      clearInterval(countdownInterval);
-      isPaused = false;
-      timeLeft = 0;
-      
-      // Reset UI
-      document.getElementById("startBtn").classList.remove('hidden');
-      document.getElementById("pauseBtn").classList.add('hidden');
-      document.getElementById("resetBtn").classList.add('hidden');
-      document.getElementById("countdownContainer").classList.add('hidden');
-      document.getElementById("pauseBtn").innerHTML = "⏸️ Jeda";
-    }
-
-    function finishTimer() {
-      clearInterval(countdownInterval);
-      
-      const countdown = document.getElementById("countdown");
-      const container = document.getElementById("countdownContainer");
-      const bell = document.getElementById("bell").value;
-      const audio = document.getElementById("audio");
-      
-      countdown.textContent = "🎉 SELESAI!";
-      container.classList.add('status-finished');
-      
-      // Play selected MP3 file
-      audio.src = bell;
-      audio.play().catch(error => {
-        console.log('Error playing audio:', error);
-        // Fallback notification if audio fails
-        alert('Timer Selesai!');
-      });
-      
-      // Reset buttons after 3 seconds
-      setTimeout(() => {
         resetTimer();
-      }, 3000);
-      
-      // Show completion notification
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Timer Selesai!', {
-          body: 'Waktu timer telah habis.',
-          icon: '⏰'
-        });
       }
-    }
 
-    // Request notification permission on load
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
+      // Preset functions
+      function setPreset(seconds) {
+        document.getElementById("duration").value = seconds;
+        updateCountdownDisplay(seconds);
+      }
 
-    // Prevent screen sleep (if supported)
-    let wakeLock = null;
-    if ('wakeLock' in navigator) {
-      navigator.wakeLock.request('screen').then(lock => {
-        wakeLock = lock;
-      }).catch(err => {
-        console.log('Wake lock not supported');
-      });
-    }
-  </script>
-</body>
+      // Format time helper
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, "0")}:${secs
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Update countdown display
+      function updateCountdownDisplay(seconds) {
+        const countdown = document.getElementById("countdown");
+        const container = document.getElementById("countdownContainer");
+
+        countdown.textContent = formatTime(seconds);
+        container.classList.remove("hidden");
+      }
+
+      // Schedule management
+      function addSchedule() {
+        const duration = parseInt(document.getElementById("duration").value);
+        const bell = document.getElementById("bell").value;
+
+        if (!duration || duration <= 0) {
+          alert("Masukkan durasi yang valid!");
+          return;
+        }
+
+        schedule.push({ duration, bell, id: Date.now() });
+        updateScheduleDisplay();
+        document.getElementById("duration").value = "";
+
+        // Show success message
+        const countdown = document.getElementById("countdown");
+        const container = document.getElementById("countdownContainer");
+        countdown.innerHTML =
+          '<i class="fas fa-check-circle"></i> Jadwal ditambahkan: ' +
+          formatTime(duration);
+        container.classList.remove("hidden");
+
+        setTimeout(() => {
+          if (!isRunning) {
+            container.classList.add("hidden");
+          }
+        }, 2000);
+      }
+
+      function updateScheduleDisplay() {
+        const scheduleList = document.getElementById("scheduleList");
+        const scheduleItems = document.getElementById("scheduleItems");
+
+        if (schedule.length === 0) {
+          scheduleList.classList.add("hidden");
+          return;
+        }
+
+        scheduleList.classList.remove("hidden");
+
+        const bellNames = {
+          "bell1.mp3": '<i class="fas fa-bell"></i> Bel Standar',
+          "bell2.mp3": '<i class="fas fa-bell"></i> Bel Ganda',
+          "bell3.mp3": '<i class="fas fa-bullhorn"></i> Bel Panjang',
+        };
+
+        scheduleItems.innerHTML = schedule
+          .map(
+            (item, i) => `
+        <div class="schedule-item ${
+          i === currentIndex && isRunning ? "active" : ""
+        }">
+          <span>#${i + 1}: ${formatTime(item.duration)} - ${
+              bellNames[item.bell]
+            }</span>
+          <button class="delete-btn" onclick="deleteSchedule(${i})" ${
+              isRunning ? "disabled" : ""
+            }>
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      function deleteSchedule(index) {
+        if (isRunning) {
+          alert("Tidak dapat menghapus jadwal saat timer sedang berjalan!");
+          return;
+        }
+
+        schedule.splice(index, 1);
+        updateScheduleDisplay();
+      }
+
+      function clearAll() {
+        document.getElementById("duration").value = "";
+        resetTimer();
+      }
+
+      // Timer functions
+      function startSystem() {
+        if (currentMode === "schedule") {
+          if (schedule.length === 0) {
+            alert("Belum ada jadwal yang ditambahkan!");
+            return;
+          }
+          currentIndex = 0;
+          runScheduleMode();
+        } else {
+          startManualMode();
+        }
+
+        isRunning = true;
+        // Update UI
+        document.getElementById("startBtn").classList.add("hidden");
+        document.getElementById("pauseBtn").classList.remove("hidden");
+        document.getElementById("resetBtn").classList.remove("hidden");
+      }
+
+      function startManualMode() {
+        const duration = parseInt(document.getElementById("duration").value);
+
+        if (!duration || duration <= 0 || duration > 3600) {
+          alert("Masukkan durasi yang valid (1-3600 detik)!");
+          return;
+        }
+
+        timeLeft = duration;
+        originalDuration = duration;
+        isPaused = false;
+
+        document
+          .getElementById("countdownContainer")
+          .classList.remove("status-finished");
+        document.getElementById("countdownLabel").textContent = "Waktu Tersisa";
+
+        updateCountdownDisplay(timeLeft);
+
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+          if (!isPaused) {
+            timeLeft--;
+            updateCountdownDisplay(timeLeft);
+
+            if (timeLeft <= 0) {
+              finishTimer();
+            }
+          }
+        }, 1000);
+      }
+
+      // Fixed runScheduleMode function
+      function runScheduleMode() {
+        if (schedule.length === 0) {
+          resetTimer();
+          return;
+        }
+
+        if (currentIndex >= schedule.length) {
+          // All schedules completed
+          clearInterval(countdownInterval);
+
+          const countdown = document.getElementById("countdown");
+          const container = document.getElementById("countdownContainer");
+          const label = document.getElementById("countdownLabel");
+
+          countdown.innerHTML = '<i class="fas fa-trophy"></i> SEMUA SELESAI!';
+          label.textContent = "Jadwal Bel Selesai";
+          container.classList.add("status-finished");
+
+          setTimeout(() => {
+            resetTimer();
+          }, 3000);
+          return;
+        }
+
+        const current = schedule[currentIndex];
+        timeLeft = current.duration;
+        originalDuration = current.duration;
+        isPaused = false;
+
+        document
+          .getElementById("countdownContainer")
+          .classList.remove("status-finished");
+        document.getElementById("countdownLabel").textContent = `Jadwal #${
+          currentIndex + 1
+        } dari ${schedule.length}`;
+
+        updateCountdownDisplay(timeLeft);
+        updateScheduleDisplay();
+
+        // Clear any existing interval before starting new one
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+          if (!isPaused && isRunning) {
+            timeLeft--;
+            updateCountdownDisplay(timeLeft);
+
+            if (timeLeft <= 0) {
+              // Current schedule finished - play bell and move to next
+              playBell(current.bell);
+
+              // Clear the current interval
+              clearInterval(countdownInterval);
+
+              // Show transition message
+              const countdown = document.getElementById("countdown");
+              const label = document.getElementById("countdownLabel");
+
+              countdown.innerHTML = '<i class="fas fa-forward"></i> BERALIH';
+              label.textContent =
+                currentIndex + 1 < schedule.length
+                  ? `Ke Jadwal #${currentIndex + 2}`
+                  : "Menyelesaikan...";
+
+              // Move to next schedule
+              currentIndex++;
+
+              // Wait 2 seconds before starting next schedule
+              setTimeout(() => {
+                if (isRunning) {
+                  // Check if still running
+                  runScheduleMode();
+                }
+              }, 2000);
+            }
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        isPaused = !isPaused;
+        const pauseBtn = document.getElementById("pauseBtn");
+
+        if (isPaused) {
+          pauseBtn.innerHTML = '<i class="fas fa-play me-2"></i> Lanjut';
+        } else {
+          pauseBtn.innerHTML = '<i class="fas fa-pause me-2"></i> Jeda';
+        }
+      }
+
+      function resetTimer() {
+        // Clear interval and reset all states
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        isPaused = false;
+        timeLeft = 0;
+        currentIndex = 0;
+        isRunning = false;
+
+        // Reset UI
+        document.getElementById("startBtn").classList.remove("hidden");
+        document.getElementById("pauseBtn").classList.add("hidden");
+        document.getElementById("resetBtn").classList.add("hidden");
+        document.getElementById("countdownContainer").classList.add("hidden");
+        document.getElementById("pauseBtn").innerHTML =
+          '<i class="fas fa-pause me-2"></i> Jeda';
+
+        updateScheduleDisplay();
+      }
+
+      function finishTimer() {
+        clearInterval(countdownInterval);
+        isRunning = false;
+
+        const countdown = document.getElementById("countdown");
+        const container = document.getElementById("countdownContainer");
+        const label = document.getElementById("countdownLabel");
+        const bell = document.getElementById("bell").value;
+
+        countdown.innerHTML = '<i class="fas fa-trophy"></i> SELESAI!';
+        label.textContent = "Timer Selesai";
+        container.classList.add("status-finished");
+
+        playBell(bell);
+
+        // Reset buttons after 3 seconds
+        setTimeout(() => {
+          resetTimer();
+        }, 3000);
+      }
+
+      function playBell(bellFile) {
+        const audio = document.getElementById("audio");
+        audio.src = bellFile;
+        audio.play().catch((error) => {
+          console.log("Error playing audio:", error);
+          // Fallback notification if audio fails
+          alert("Timer Selesai!");
+        });
+
+        // Show notification
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Timer Selesai!", {
+            body: "Waktu timer telah habis.",
+            icon: "⏰",
+          });
+        }
+      }
+
+      function playNow() {
+        const bell = document.getElementById("bell").value;
+        const countdown = document.getElementById("countdown");
+        const container = document.getElementById("countdownContainer");
+        const label = document.getElementById("countdownLabel");
+
+        playBell(bell);
+
+        countdown.innerHTML = '<i class="fas fa-bell"></i><br>BEL DIPUTAR';
+        label.textContent = "Test Suara Bel";
+        container.classList.remove("hidden", "status-finished");
+
+        setTimeout(() => {
+          if (!isRunning) {
+            container.classList.add("hidden");
+          }
+        }, 2000);
+      }
+
+      // Request notification permission on load
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
+      // Prevent screen sleep (if supported)
+      let wakeLock = null;
+      if ("wakeLock" in navigator) {
+        navigator.wakeLock
+          .request("screen")
+          .then((lock) => {
+            wakeLock = lock;
+          })
+          .catch((err) => {
+            console.log("Wake lock not supported");
+          });
+      }
+
+      // Initialize
+      switchMode();
+    </script>
+  </body>
 </html>
